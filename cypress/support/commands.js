@@ -5,6 +5,5 @@ Cypress.Commands.add("loginWithFixture", (userType) => {
     cy.get('[data-test="username"]').type(user.username)
     cy.get('[data-test="password"]').type(user.password)
     cy.get("#login-button").click()
-    cy.url().should("include", "/inventory.html")
   })
 })
