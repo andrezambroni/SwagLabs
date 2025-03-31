@@ -1,3 +1,5 @@
+import { faker } from "@faker-js/faker"
+
 describe("Products Tests", () => {
   beforeEach(() => {
     cy.loginWithFixture("standard_user") // Executa o login antes de cada teste
@@ -26,7 +28,7 @@ describe("Products Tests", () => {
     cy.get(".cart_item").should("have.length", 1) // Verifica se há 1 item no carrinho
   })
 
-  it.only("Deve adicionar produtos ao carrinho e verificar no carrinho", () => {
+  it("Deve adicionar produtos ao carrinho e verificar no carrinho", () => {
     const quantidadeDeItens = 2 // Defina a quantidade de itens que deseja adicionar
 
     // Adiciona os primeiros `quantidadeDeItens` produtos ao carrinho
@@ -46,6 +48,29 @@ describe("Products Tests", () => {
     cy.get("#shopping_cart_container").click()
 
     // Verifica se o número correto de itens está listado na página do carrinho
+    cy.get(".cart_item").should("have.length", quantidadeDeItens)
+  })
+
+  it("Deve adicionar uma quantidade aleatória de produtos ao carrinho e verificar", () => {
+    const quantidadeDeItens = faker.number.int({ min: 1, max: 6 }) // Generate a random number between 1 and 6
+
+    // Add the first `quantidadeDeItens` products to the cart
+    cy.get(".inventory_item").each(($el, index) => {
+      if (index < quantidadeDeItens) {
+        cy.wrap($el).find(".btn_primary.btn_inventory").click()
+      }
+    })
+
+    // Verify that the cart badge shows the correct number of items
+    cy.get(".shopping_cart_badge").should(
+      "contain",
+      quantidadeDeItens.toString()
+    )
+
+    // Click on the cart button
+    cy.get("#shopping_cart_container").click()
+
+    // Verify that the correct number of items is listed on the cart page
     cy.get(".cart_item").should("have.length", quantidadeDeItens)
   })
 })
